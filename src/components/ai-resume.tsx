@@ -1,17 +1,16 @@
-// app/AIResumeImprover.tsx
 "use client";
 
-import { useState } from 'react';
-import { Upload, FileText, Briefcase, Sparkles, Download, CheckCircle, ArrowRight, Zap, ArrowLeft } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Upload, FileText, Briefcase, Sparkles, Download, CheckCircle, ArrowRight, Zap, ArrowLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogClose, DialogHeader } from '@/components/ui/dialog'
 import Link from 'next/link';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import CVDocument from './cv-document';
+import { DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 
 interface ResumeImprovement {
   original: string;
@@ -28,6 +27,18 @@ export default function AIResumeImprover() {
   const [progress, setProgress] = useState(0);
   const [improvement, setImprovement] = useState<ResumeImprovement | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -45,6 +56,11 @@ export default function AIResumeImprover() {
     setIsProcessing(true);
     setProgress(0);
     setError(null);
+    if (resumeText.length < 100) {
+      setError('El CV es demasiado corto. Por favor, proporciona un CV más detallado.');
+      setIsProcessing(false);
+      return;
+    }
 
     try {
       const intervals = [20, 40, 60, 80, 100];
@@ -87,10 +103,16 @@ export default function AIResumeImprover() {
     setProgress(0);
     setError(null);
 
+    if (jobOffer.length < 50) {
+      setError('La descripción de la oferta laboral es demasiado corta. Por favor, proporciona más detalles.');
+      setIsProcessing(false);
+      return;
+    }
+
     try {
       const intervals = [20, 40, 60, 80, 100];
       for (let i = 0; i < intervals.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setProgress(intervals[i]);
       }
 
@@ -323,7 +345,7 @@ export default function AIResumeImprover() {
         )}
 
         {isProcessing && (
-          <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <Card className="max-w-4xl mx-auto shadow-xl mt-5 border-0 bg-white/80 backdrop-blur-sm">
             <CardContent className="py-12 text-center">
               <div className="space-y-6">
                 <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
@@ -355,8 +377,31 @@ export default function AIResumeImprover() {
                     <p className="text-gray-600">Qué tan bien se ajusta tu CV a la oferta</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-4xl font-bold text-green-600">{improvement.compatibilityScore}%</div>
-                    <Badge className="bg-green-100 text-green-800">Excelente Match</Badge>
+                    {
+                      improvement.compatibilityScore < 50 ? (
+                        <>
+                          <div className="text-4xl font-bold text-red-800">{improvement.compatibilityScore}%</div>
+                          <Badge className="bg-red-100 text-red-800">Bajo Match</Badge>
+                        </>
+                      ) : improvement.compatibilityScore < 80 ? (
+                        <>
+                          <div className="text-4xl font-bold text-yellow-800">{improvement.compatibilityScore}%</div>
+                          <Badge className="bg-yellow-100 text-yellow-800">Buen Match</Badge>
+                        </>
+                      ) : (
+                        improvement.compatibilityScore < 95 ? (
+                          <>
+                            <div className="text-4xl font-bold text-green-800">{improvement.compatibilityScore}%</div>
+                            <Badge className="bg-green-100 text-green-800">Excelente Match</Badge>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-4xl font-bold text-blue-800">{improvement.compatibilityScore}%</div>
+                            <Badge className="bg-blue-100 text-blue-800">Match Perfecto</Badge>
+                          </>
+                        )
+                      )
+                    }
                   </div>
                 </div>
               </CardContent>
@@ -442,6 +487,36 @@ export default function AIResumeImprover() {
                 Descargar CV Mejorado
               </Button>
             </div>
+
+            <Button onClick={() => setIsOpen(true)} className="px-6 py-2">
+              Ver Comparación
+            </Button>
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                <div className="bg-white rounded-xl w-full max-w-5xl max-h-[90vh] overflow-auto p-6 relative">
+                  <DialogHeader className="flex justify-between items-center">
+                    <DialogTitle className="text-2xl font-bold">Comparación de CVs</DialogTitle>
+                    <DialogClose asChild>
+                      <Button variant="ghost" className="p-2 absolute top-4 right-4">
+                        <X className="w-5 h-5" />
+                      </Button>
+                    </DialogClose>
+                  </DialogHeader>
+
+                  <div className="grid md:grid-cols-2 gap-6 mt-4">
+                    <div className="border rounded-lg p-4 bg-gray-50 overflow-auto max-h-[75vh]">
+                      <h3 className="font-semibold mb-2">CV Original</h3>
+                      <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement.original}</pre>
+                    </div>
+                    <div className="border rounded-lg p-4 bg-blue-50 overflow-auto max-h-[75vh]">
+                      <h3 className="font-semibold mb-2 text-blue-700">CV Optimizado</h3>
+                      <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement.improved}</pre>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
       </div>

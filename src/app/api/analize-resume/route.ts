@@ -22,20 +22,35 @@ export async function POST(request: NextRequest) {
             messages: [
                 {
                     role: "system",
-                    content: "Eres un experto en optimización de currículums y evaluación de CVs para ofertas de trabajo. Responde siempre en JSON válido. No agregues explicaciones ni texto fuera del JSON. Usa únicamente las claves: 'score', 'strengths', 'weaknesses'. 'score' debe ser un número entre 0 y 100. 'strengths' y 'weaknesses' deben ser listas de frases cortas."
-                }, {
-                    role: 'user',
-                    content: `Analiza este CV y da una puntuación del 0 al 100, indica puntos fuertes y débiles en formato JSON con estas claves:
-          {
-            "score": (número),
-            "strengths": [lista de puntos fuertes],
-            "weaknesses": [lista de puntos débiles]
-          }
+                    content: `
+Eres un experto en optimización y evaluación de currículums para ofertas de trabajo.
+Tu tarea es analizar un CV y producir únicamente un JSON válido con las claves:
 
-          CV:
-          ${CV_text}`
+- "score": número entero entre 0 y 100, donde 100 significa CV perfectamente alineado con la oferta.
+- "strengths": lista de frases cortas indicando los puntos fuertes del CV.
+- "weaknesses": lista de frases cortas indicando los puntos débiles del CV.
+
+No agregues explicaciones, títulos ni texto fuera del JSON. 
+Siempre responde con un JSON válido que pueda ser parseado directamente.
+      `.trim()
+                },
+                {
+                    role: "user",
+                    content: `
+Analiza el siguiente CV y proporciona la puntuación y análisis en JSON:
+
+CV:
+${CV_text}
+
+Formato de salida esperado:
+{
+  "score": (número entre 0 y 100),
+  "strengths": [ "frase corta 1", "frase corta 2", ... ],
+  "weaknesses": [ "frase corta 1", "frase corta 2", ... ]
+}
+      `.trim()
                 }
-            ],
+            ]
         });
 
         const messageContent = completion.choices[0].message.content;
