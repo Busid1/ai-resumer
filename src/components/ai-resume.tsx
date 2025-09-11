@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Upload, FileText, Briefcase, Sparkles, Download, CheckCircle, ArrowRight, Zap, ArrowLeft, X } from 'lucide-react';
+import { Upload, FileText, Briefcase, Sparkles, Download, CheckCircle, ArrowRight, Zap, ArrowLeft, X, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,6 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogClose, DialogHeader } from '@/components/ui/dialog'
 import Link from 'next/link';
 import { DialogContent, DialogTitle } from '@radix-ui/react-dialog';
+import { pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
 
 interface ResumeImprovement {
   original: string;
@@ -29,7 +32,7 @@ export default function AIResumeImprover() {
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -40,15 +43,21 @@ export default function AIResumeImprover() {
     };
   }, [isOpen]);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type === 'text/plain') {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setResumeText(e.target?.result as string);
-      };
-      reader.readAsText(file);
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjs.getDocument(new Uint8Array(arrayBuffer)).promise;
+
+    let extractedText = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      extractedText += content.items.map((item: any) => item.str).join(" ") + "\n";
     }
+
+    setResumeText(extractedText);
   };
 
   const handleSubmitResumeText = async (event: React.FormEvent) => {
@@ -236,7 +245,7 @@ export default function AIResumeImprover() {
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
                     <Input
                       type="file"
-                      accept=".txt"
+                      accept=".pdf"
                       onChange={handleFileUpload}
                       className="hidden"
                       id="file-upload"
@@ -244,7 +253,7 @@ export default function AIResumeImprover() {
                     <label htmlFor="file-upload" className="cursor-pointer">
                       <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-600 mb-2">Haz clic para subir tu CV</p>
-                      <p className="text-sm text-gray-400">Solo archivos .txt</p>
+                      <p className="text-sm text-gray-400">Solo archivos .pdf</p>
                     </label>
                   </div>
                 </div>
@@ -458,12 +467,16 @@ export default function AIResumeImprover() {
             </div>
 
             <div className="flex justify-center space-x-4 pt-6">
-              <Button onClick={resetForm} variant="outline" size="lg">
+              <Button onClick={resetForm} variant="outline" size="lg" className='px-8 cursor-pointer'>
                 Optimizar Otro CV
+              </Button>
+              <Button onClick={() => setIsOpen(true)} size="lg" className="px-8 bg-blue-700 hover:bg-blue-600 cursor-pointer">
+                <Eye/>
+                Ver Comparación
               </Button>
               <Button
                 size="lg"
-                className="px-8"
+                className="px-8 cursor-pointer"
                 onClick={async () => {
                   try {
                     const response = await fetch('/api/generate-pdf', {
@@ -487,10 +500,6 @@ export default function AIResumeImprover() {
                 Descargar CV Mejorado
               </Button>
             </div>
-
-            <Button onClick={() => setIsOpen(true)} className="px-6 py-2">
-              Ver Comparación
-            </Button>
 
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

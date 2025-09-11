@@ -1,4 +1,3 @@
-// components/CVDocument.tsx
 import { Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
@@ -18,7 +17,6 @@ interface CVDocumentProps {
 }
 
 export default function CVDocument({ CVImproved }: CVDocumentProps) {
-  // Limpiar asteriscos
   const cleanedText = (CVImproved || '').replace(/\*/g, '');
 
   return (
