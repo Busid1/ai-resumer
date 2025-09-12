@@ -25,6 +25,7 @@ interface ResumeImprovement {
 export default function AIResumeImprover() {
   const [currentStep, setCurrentStep] = useState(1);
   const [resumeText, setResumeText] = useState('');
+  const [fileName, setFileName] = useState('');
   const [jobOffer, setJobOffer] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -46,6 +47,8 @@ export default function AIResumeImprover() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    console.log(file.name);
+    
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjs.getDocument(new Uint8Array(arrayBuffer)).promise;
@@ -57,6 +60,7 @@ export default function AIResumeImprover() {
       extractedText += content.items.map((item: any) => item.str).join(" ") + "\n";
     }
 
+    setFileName(file.name)
     setResumeText(extractedText);
   };
 
@@ -78,25 +82,6 @@ export default function AIResumeImprover() {
         setProgress(intervals[i]);
       }
 
-      const response = await fetch('/api/analize-resume', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ CV_text: resumeText }),
-      });
-
-      if (!response.ok) throw new Error('Error al analizar el CV');
-      const data = await response.json();
-      const result = data.result;
-      if (!result || typeof result !== 'object') {
-        throw new Error('Formato de respuesta inválido');
-      }
-
-      setImprovement({
-        original: resumeText,
-        improved: result.optimized_cv || resumeText,
-        suggestions: result.changes || result.weaknesses || [],
-        compatibilityScore: result.score || 0,
-      });
       setProgress(100);
       setIsProcessing(false);
       setCurrentStep(2);
@@ -125,7 +110,7 @@ export default function AIResumeImprover() {
         setProgress(intervals[i]);
       }
 
-      const response = await fetch('/api/analize-job', {
+      const response = await fetch('/api/optimize-cv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ CV_text: resumeText, Job_text: jobOffer }),
@@ -253,6 +238,7 @@ export default function AIResumeImprover() {
                     <label htmlFor="file-upload" className="cursor-pointer">
                       <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-600 mb-2">Haz clic para subir tu CV</p>
+                      {fileName && <p className="text-sm text-gray-500">Archivo seleccionado: {fileName}</p>}
                       <p className="text-sm text-gray-400">Solo archivos .pdf</p>
                     </label>
                   </div>
@@ -277,7 +263,7 @@ export default function AIResumeImprover() {
                   onClick={handleSubmitResumeText}
                   disabled={!resumeText.trim() || isProcessing}
                   size="lg"
-                  className="px-8 py-3 text-lg"
+                  className="px-8 py-3 text-lg cursor-pointer"
                 >
                   {isProcessing ? (
                     <>
@@ -326,6 +312,7 @@ export default function AIResumeImprover() {
                   onClick={() => setCurrentStep(1)}
                   variant="outline"
                   size="lg"
+                  className='cursor-pointer'
                 >
                   Volver
                 </Button>
@@ -333,7 +320,7 @@ export default function AIResumeImprover() {
                   onClick={processResume}
                   disabled={!jobOffer.trim() || isProcessing}
                   size="lg"
-                  className="px-8 py-3 text-lg"
+                  className="px-8 py-3 text-lg cursor-pointer"
                 >
                   {isProcessing ? (
                     <>

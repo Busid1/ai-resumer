@@ -13,7 +13,10 @@ export async function POST(request: NextRequest) {
         const { CV_text, Job_text } = await request.json();
 
         if (!CV_text || !Job_text) {
-            return NextResponse.json({ error: 'Faltan el CV o la oferta de trabajo.' }, { status: 400 });
+            return NextResponse.json(
+                { error: 'Faltan el CV o la oferta de trabajo.' },
+                { status: 400 }
+            );
         }
 
         const completion = await openai.chat.completions.create({
@@ -32,7 +35,7 @@ Debes responder únicamente en JSON válido con las siguientes claves:
 - "score": número entre 0 y 100 indicando la adecuación del CV a la oferta (100 = totalmente alineado).
 
 No agregues texto fuera del JSON. Siempre usa frases concisas en "changes".
-      `.trim()
+          `.trim(),
                 },
                 {
                     role: 'user',
@@ -49,15 +52,18 @@ Formato de salida esperado:
   "changes": ["Cambio importante 1", "Cambio importante 2", ...],
   "score": (número entre 0 y 100)
 }
-      `.trim()
-                }
+          `.trim(),
+                },
             ],
         });
 
         const messageContent = completion.choices[0].message.content;
 
         if (!messageContent) {
-            return NextResponse.json({ error: 'La respuesta de OpenAI no contiene contenido.' }, { status: 500 });
+            return NextResponse.json(
+                { error: 'La respuesta de OpenAI no contiene contenido.' },
+                { status: 500 }
+            );
         }
 
         let jsonStr = messageContent.trim();
@@ -67,13 +73,19 @@ Formato de salida esperado:
         try {
             result = JSON.parse(jsonStr);
         } catch (parseErr) {
-            console.error('Error al parsear JSON:', parseErr);
-            return NextResponse.json({ error: 'La respuesta de OpenAI no es un JSON válido.' }, { status: 500 });
+            console.error('Error al parsear JSON:', parseErr, jsonStr);
+            return NextResponse.json(
+                { error: 'La respuesta de OpenAI no es un JSON válido.' },
+                { status: 500 }
+            );
         }
 
         return NextResponse.json({ result });
     } catch (err) {
         console.error('Error:', err);
-        return NextResponse.json({ error: 'Error adaptando el CV.' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Error adaptando el CV.' },
+            { status: 500 }
+        );
     }
 }
