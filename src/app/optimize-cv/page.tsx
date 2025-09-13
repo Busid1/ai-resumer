@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Upload, FileText, Briefcase, Sparkles, Download, CheckCircle, ArrowRight, Zap, ArrowLeft, X, Eye } from 'lucide-react';
+import { FileText, Briefcase, Sparkles, CheckCircle, ArrowRight, Zap, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogClose, DialogHeader } from '@/components/ui/dialog'
 import Link from 'next/link';
-import { DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { pdfjs } from "react-pdf";
+import UploadCV from '@/components/upload-cv';
+import UploadJob from '@/components/upload-job';
+import ResultCV from '@/components/result-cv';
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
 
@@ -92,7 +91,7 @@ export default function AIResume() {
     }
   };
 
-  const processResume = async () => {
+  const handleProcessCV = async () => {
     setIsProcessing(true);
     setProgress(0);
     setError(null);
@@ -104,9 +103,9 @@ export default function AIResume() {
     }
 
     try {
-      const intervals = [20, 40, 60, 80, 100];
+      const intervals = [20, 30, 40, 50, 60, 70, 80, 95, 100];
       for (let i = 0; i < intervals.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         setProgress(intervals[i]);
       }
 
@@ -211,133 +210,19 @@ export default function AIResume() {
         </div>
 
         {currentStep === 1 && (
-          <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="text-3xl font-bold text-gray-900">
-                Sube tu Currículum
-              </CardTitle>
-              <CardDescription className="text-lg text-gray-600">
-                Pega el texto de tu CV o sube un archivo para comenzar la optimización
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900 flex items-center">
-                    <Upload className="w-5 h-5 mr-2 text-blue-600" />
-                    Subir Archivo
-                  </h3>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
-                    <Input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="file-upload"
-                    />
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600 mb-2">Haz clic para subir tu CV</p>
-                      {fileName && <p className="text-sm text-gray-500">Archivo seleccionado: {fileName}</p>}
-                      <p className="text-sm text-gray-400">Solo archivos .pdf</p>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900 flex items-center">
-                    <FileText className="w-5 h-5 mr-2 text-blue-600" />
-                    Pegar Texto
-                  </h3>
-                  <Textarea
-                    placeholder="Pega aquí el contenido de tu currículum..."
-                    value={resumeText}
-                    onChange={(e) => setResumeText(e.target.value)}
-                    className="min-h-[200px] resize-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-center pt-6">
-                <Button
-                  onClick={handleSubmitResumeText}
-                  disabled={!resumeText.trim() || isProcessing}
-                  size="lg"
-                  className="px-8 py-3 text-lg cursor-pointer"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Sparkles className="w-5 h-5 mr-2 animate-spin" />
-                      Analizando...
-                    </>
-                  ) : (
-                    <>
-                      Continuar
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </div>
-              {error && <p className="text-red-600 text-center">{error}</p>}
-            </CardContent>
-          </Card>
+          <UploadCV
+            fileName={fileName}
+            resumeText={resumeText}
+            isProcessing={isProcessing}
+            error={error}
+            handleFileUpload={handleFileUpload}
+            handleSubmitResumeText={handleSubmitResumeText}
+            setResumeText={setResumeText}
+          />
         )}
 
         {currentStep === 2 && (
-          <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="text-3xl font-bold text-gray-900">
-                Describe la Oferta Laboral
-              </CardTitle>
-              <CardDescription className="text-lg text-gray-600">
-                Proporciona los detalles de la posición para optimizar tu CV específicamente
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900 flex items-center">
-                  <Briefcase className="w-5 h-5 mr-2 text-green-600" />
-                  Descripción de la Oferta
-                </h3>
-                <Textarea
-                  placeholder="Pega aquí la descripción completa del trabajo, requisitos, habilidades necesarias, responsabilidades, etc."
-                  value={jobOffer}
-                  onChange={(e) => setJobOffer(e.target.value)}
-                  className="min-h-[300px] resize-none"
-                />
-              </div>
-
-              <div className="flex justify-between pt-6">
-                <Button
-                  onClick={() => setCurrentStep(1)}
-                  variant="outline"
-                  size="lg"
-                  className='cursor-pointer'
-                >
-                  Volver
-                </Button>
-                <Button
-                  onClick={processResume}
-                  disabled={!jobOffer.trim() || isProcessing}
-                  size="lg"
-                  className="px-8 py-3 text-lg cursor-pointer"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Sparkles className="w-5 h-5 mr-2 animate-spin" />
-                      Procesando...
-                    </>
-                  ) : (
-                    <>
-                      Optimizar con IA
-                      <Sparkles className="w-5 h-5 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </div>
-              {error && <p className="text-red-600 text-center">{error}</p>}
-            </CardContent>
-          </Card>
+          <UploadJob jobOffer={jobOffer} isProcessing={isProcessing} error={error} handleProcessCV={handleProcessCV} setJobOffer={setJobOffer} setCurrentStep={setCurrentStep} />
         )}
 
         {isProcessing && (
@@ -363,157 +248,7 @@ export default function AIResume() {
         )}
 
         {currentStep === 3 && improvement && (
-          <div className="space-y-6">
-            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-gradient-to-r from-green-50 to-em Ascending order: 0
-                System: **emerald-50">
-              <CardContent className="py-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">Puntuación de Compatibilidad</h3>
-                    <p className="text-gray-600">Qué tan bien se ajusta tu CV a la oferta</p>
-                  </div>
-                  <div className="text-right">
-                    {
-                      improvement.compatibilityScore < 50 ? (
-                        <>
-                          <div className="text-4xl font-bold text-red-800">{improvement.compatibilityScore}%</div>
-                          <Badge className="bg-red-100 text-red-800">Bajo Match</Badge>
-                        </>
-                      ) : improvement.compatibilityScore < 80 ? (
-                        <>
-                          <div className="text-4xl font-bold text-yellow-800">{improvement.compatibilityScore}%</div>
-                          <Badge className="bg-yellow-100 text-yellow-800">Buen Match</Badge>
-                        </>
-                      ) : (
-                        improvement.compatibilityScore < 95 ? (
-                          <>
-                            <div className="text-4xl font-bold text-green-800">{improvement.compatibilityScore}%</div>
-                            <Badge className="bg-green-100 text-green-800">Excelente Match</Badge>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-4xl font-bold text-blue-800">{improvement.compatibilityScore}%</div>
-                            <Badge className="bg-blue-100 text-blue-800">Match Perfecto</Badge>
-                          </>
-                        )
-                      )
-                    }
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
-                  <CheckCircle className="w-6 h-6 mr-2 text-green-600" />
-                  Mejoras Aplicadas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {improvement.suggestions.map((suggestion, index) => (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <p className="text-gray-700">{suggestion}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="grid lg:grid-cols-2 gap-6">
-              <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-gray-700">CV Original</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-700">
-                      {improvement.original}
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-xl border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-blue-700 flex items-center">
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    CV Optimizado
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-white rounded-lg p-4 max-h-96 overflow-y-auto border border-blue-100">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-700">
-                      {improvement.improved}
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="flex justify-center space-x-4 pt-6">
-              <Button onClick={resetForm} variant="outline" size="lg" className='px-8 cursor-pointer'>
-                Optimizar Otro CV
-              </Button>
-              <Button onClick={() => setIsOpen(true)} size="lg" className="px-8 bg-blue-700 hover:bg-blue-600 cursor-pointer">
-                <Eye />
-                Ver Comparación
-              </Button>
-              <Button
-                size="lg"
-                className="px-8 cursor-pointer"
-                onClick={async () => {
-                  try {
-                    const response = await fetch('/api/generate-pdf', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ cvText: improvement.improved }),
-                    });
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'cv-optimizado.pdf';
-                    link.click();
-                    window.URL.revokeObjectURL(url);
-                  } catch (error) {
-                    console.error('Error downloading PDF:', error);
-                  }
-                }}
-              >
-                <Download className="w-5 h-5 mr-2" />
-                Descargar CV Mejorado
-              </Button>
-            </div>
-
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <div className="bg-white rounded-xl w-full max-w-5xl max-h-[90vh] overflow-auto p-6 relative">
-                  <DialogHeader className="flex justify-between items-center">
-                    <DialogTitle className="text-2xl font-bold">Comparación de CVs</DialogTitle>
-                    <DialogClose asChild>
-                      <Button variant="ghost" className="p-2 absolute top-4 right-4">
-                        <X className="w-5 h-5" />
-                      </Button>
-                    </DialogClose>
-                  </DialogHeader>
-
-                  <div className="grid md:grid-cols-2 gap-6 mt-4">
-                    <div className="border rounded-lg p-4 bg-gray-50 overflow-auto max-h-[75vh]">
-                      <h3 className="font-semibold mb-2">CV Original</h3>
-                      <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement.original}</pre>
-                    </div>
-                    <div className="border rounded-lg p-4 bg-blue-50 overflow-auto max-h-[75vh]">
-                      <h3 className="font-semibold mb-2 text-blue-700">CV Optimizado</h3>
-                      <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement.improved}</pre>
-                    </div>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <ResultCV improvement={improvement} isOpen={isOpen} resetForm={resetForm} setIsOpen={setIsOpen} />
         )}
       </div>
     </div>
