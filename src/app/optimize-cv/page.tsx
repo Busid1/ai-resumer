@@ -22,7 +22,7 @@ interface ResumeImprovement {
   compatibilityScore: number;
 }
 
-export default function AIResumeImprover() {
+export default function AIResume() {
   const [currentStep, setCurrentStep] = useState(1);
   const [resumeText, setResumeText] = useState('');
   const [fileName, setFileName] = useState('');
@@ -48,7 +48,7 @@ export default function AIResumeImprover() {
     const file = e.target.files?.[0];
     if (!file) return;
     console.log(file.name);
-    
+
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjs.getDocument(new Uint8Array(arrayBuffer)).promise;
@@ -168,8 +168,8 @@ export default function AIResumeImprover() {
                 <Zap className="w-3 h-3 mr-1" />
                 Potenciado por IA
               </Badge>
-              <Link href="/">
-                <Button variant="outline" size="sm">
+              <Link href="/landing-page">
+                <Button variant="outline" size="sm" className='cursor-pointer'>
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Volver al Inicio
                 </Button>
@@ -458,7 +458,7 @@ export default function AIResumeImprover() {
                 Optimizar Otro CV
               </Button>
               <Button onClick={() => setIsOpen(true)} size="lg" className="px-8 bg-blue-700 hover:bg-blue-600 cursor-pointer">
-                <Eye/>
+                <Eye />
                 Ver Comparación
               </Button>
               <Button

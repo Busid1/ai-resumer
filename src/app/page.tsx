@@ -1,9 +1,9 @@
-import AIResumeImprover from "@/components/ai-resume";
+import LandingPage from "./landing-page/page";
 
-export default function Home() {
+export default function Page() {
   return (
     <div>
-      <AIResumeImprover/>
+      <LandingPage/>
     </div>
   );
 }
