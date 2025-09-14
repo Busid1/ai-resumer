@@ -11,7 +11,7 @@ import ResultCV from '@/components/result-cv';
 import Header from '@/components/header';
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-// @ts-expect-error
+// @ts-expect-error: PDF.js legacy build import for Node environment
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
@@ -58,7 +58,9 @@ export default function AIResume() {
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      extractedText += content.items.map((item: any) => item.str).join(" ") + "\n";
+      extractedText += content.items
+        .map((item: { str: string }) => item.str)
+        .join(" ") + "\n";
     }
 
     setFileName(file.name)
