@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from 'react';
-import { ArrowRight, CheckCircle, Star, Users, Zap, FileText, Target, TrendingUp, Download, Play, ChevronDown } from 'lucide-react';
+import { ArrowRight, CheckCircle, Star, Zap, FileText, Target, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

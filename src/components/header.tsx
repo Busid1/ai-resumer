@@ -17,7 +17,7 @@ export default function Header() {
                     <div className="flex items-center space-x-3">
                         <Link href="/" className="flex items-center space-x-3">
                             <div className="w-10 h-10 ">
-                                <Image src="favicon.ico" alt="PerfectCVAI-logo" />
+                                <Image src="/favicon.ico" width={40} height={40} alt="PerfectCVAI-logo" />
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-900">PerfectCV AI</h1>
