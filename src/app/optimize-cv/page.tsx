@@ -11,7 +11,7 @@ import ResultCV from '@/components/result-cv';
 import Header from '@/components/header';
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-// @ts-ignore
+// @ts-expect-error
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
@@ -222,7 +222,7 @@ export default function AIResume() {
         )}
 
         {currentStep === 3 && improvement && (
-          <ResultCV improvement={improvement} isOpen={isOpen} resetForm={resetForm} setIsOpen={setIsOpen} />
+          <ResultCV improvement={improvement} resetForm={resetForm} setIsOpen={setIsOpen} />
         )}
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

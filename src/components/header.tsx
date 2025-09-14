@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { ArrowLeft, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function Header() {
     const pathname = usePathname();
@@ -16,7 +17,7 @@ export default function Header() {
                     <div className="flex items-center space-x-3">
                         <Link href="/" className="flex items-center space-x-3">
                             <div className="w-10 h-10 ">
-                                <img src="favicon.ico" alt="PerfectCVAI-logo" />
+                                <Image src="favicon.ico" alt="PerfectCVAI-logo" />
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-900">PerfectCV AI</h1>

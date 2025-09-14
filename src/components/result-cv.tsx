@@ -1,8 +1,7 @@
-import { CheckCircle, Download, Eye, Sparkles, X } from "lucide-react";
+import { CheckCircle, Download, Eye, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 interface ResumeImprovement {
     original: string;
@@ -13,14 +12,12 @@ interface ResumeImprovement {
 
 interface ResultCVProps {
     improvement: ResumeImprovement;
-    isOpen: boolean;
     resetForm: (event: React.FormEvent) => void;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ResultCV({
     improvement,
-    isOpen,
     resetForm,
     setIsOpen,
 }: ResultCVProps) {
