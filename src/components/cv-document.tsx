@@ -1,3 +1,5 @@
+"use client";
+
 import { Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({

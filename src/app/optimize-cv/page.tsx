@@ -1,18 +1,20 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { FileText, Briefcase, Sparkles, CheckCircle, ArrowRight, Zap, ArrowLeft } from 'lucide-react';
+import { FileText, Briefcase, Sparkles, CheckCircle, ArrowRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
-import { pdfjs } from "react-pdf";
 import UploadCV from '@/components/upload-cv';
 import UploadJob from '@/components/upload-job';
 import ResultCV from '@/components/result-cv';
+import Header from '@/components/header';
+import { Dialog, DialogClose, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
+import { DialogHeader } from '@/components/ui/dialog';
+// @ts-ignore
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
 
 interface ResumeImprovement {
   original: string;
@@ -50,7 +52,7 @@ export default function AIResume() {
 
 
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjs.getDocument(new Uint8Array(arrayBuffer)).promise;
+    const pdf = await pdfjsLib.getDocument(new Uint8Array(arrayBuffer)).promise;
 
     let extractedText = "";
     for (let i = 1; i <= pdf.numPages; i++) {
@@ -103,9 +105,9 @@ export default function AIResume() {
     }
 
     try {
-      const intervals = [20, 30, 40, 50, 60, 70, 80, 95, 100];
+      const intervals = [20, 40, 60, 80, 95];
       for (let i = 0; i < intervals.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         setProgress(intervals[i]);
       }
 
@@ -148,36 +150,7 @@ export default function AIResume() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <div className="bg-white/80 backdrop-blur-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <Link href="/" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">ResumeBoost AI</h1>
-                  <p className="text-sm text-gray-600">Optimiza tu CV con Inteligencia Artificial</p>
-                </div>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                <Zap className="w-3 h-3 mr-1" />
-                Potenciado por IA
-              </Badge>
-              <Link href="/landing-page">
-                <Button variant="outline" size="sm" className='cursor-pointer'>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Volver al Inicio
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-center space-x-8">
@@ -218,6 +191,7 @@ export default function AIResume() {
             handleFileUpload={handleFileUpload}
             handleSubmitResumeText={handleSubmitResumeText}
             setResumeText={setResumeText}
+            setFileName={setFileName}
           />
         )}
 
@@ -250,6 +224,31 @@ export default function AIResume() {
         {currentStep === 3 && improvement && (
           <ResultCV improvement={improvement} isOpen={isOpen} resetForm={resetForm} setIsOpen={setIsOpen} />
         )}
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-[1200px] md:max-w-[1400px] lg:max-w-[1600px] max-h-[90vh] overflow-auto p-6 relative">
+              <DialogHeader className="flex justify-between items-center">
+                <DialogTitle className="text-2xl font-bold">Comparación de CVs</DialogTitle>
+                <DialogClose asChild>
+                  <Button variant="ghost" className="p-2 absolute top-4 right-4 cursor-pointer hover:bg-red-500 hover:text-white">
+                    <X className="w-5 h-5" />
+                  </Button>
+                </DialogClose>
+              </DialogHeader>
+
+              <div className="grid md:grid-cols-2 gap-6 mt-4">
+                <div className="border rounded-lg p-4 bg-gray-50 overflow-auto max-h-[75vh]">
+                  <h3 className="font-semibold mb-2">CV Original</h3>
+                  <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement?.original}</pre>
+                </div>
+                <div className="border rounded-lg p-4 bg-blue-50 overflow-auto max-h-[75vh]">
+                  <h3 className="font-semibold mb-2 text-blue-700">CV Optimizado</h3>
+                  <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement?.improved}</pre>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

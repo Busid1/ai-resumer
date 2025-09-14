@@ -149,32 +149,6 @@ export default function ResultCV({
                     Descargar CV Mejorado
                 </Button>
             </div>
-
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="bg-white rounded-xl w-full max-w-5xl max-h-[90vh] overflow-auto p-6 relative">
-                        <DialogHeader className="flex justify-between items-center">
-                            <DialogTitle className="text-2xl font-bold">Comparación de CVs</DialogTitle>
-                            <DialogClose asChild>
-                                <Button variant="ghost" className="p-2 absolute top-4 right-4">
-                                    <X className="w-5 h-5" />
-                                </Button>
-                            </DialogClose>
-                        </DialogHeader>
-
-                        <div className="grid md:grid-cols-2 gap-6 mt-4">
-                            <div className="border rounded-lg p-4 bg-gray-50 overflow-auto max-h-[75vh]">
-                                <h3 className="font-semibold mb-2">CV Original</h3>
-                                <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement.original}</pre>
-                            </div>
-                            <div className="border rounded-lg p-4 bg-blue-50 overflow-auto max-h-[75vh]">
-                                <h3 className="font-semibold mb-2 text-blue-700">CV Optimizado</h3>
-                                <pre className="whitespace-pre-wrap text-sm text-gray-700">{improvement.improved}</pre>
-                            </div>
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { ArrowRight, FileText, Sparkles, Upload } from "lucide-react";
+import { ArrowRight, FileText, Sparkles, Trash, Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -12,6 +12,7 @@ interface UploadCVProps {
     handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleSubmitResumeText: (event: React.FormEvent) => void;
     setResumeText: React.Dispatch<React.SetStateAction<string>>;
+    setFileName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function UploadCV({
@@ -22,6 +23,7 @@ export default function UploadCV({
     handleFileUpload,
     handleSubmitResumeText,
     setResumeText,
+    setFileName
 }: UploadCVProps) {
     return (
         <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -40,7 +42,7 @@ export default function UploadCV({
                             <Upload className="w-5 h-5 mr-2 text-blue-600" />
                             Subir Archivo
                         </h3>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                        <div className="border-2 border-dashed min-h-[200px] border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
                             <Input
                                 type="file"
                                 accept=".pdf"
@@ -75,7 +77,21 @@ export default function UploadCV({
                     </div>
                 </div>
 
-                <div className="flex justify-center pt-6">
+                <div className="flex justify-center pt-6 gap-10">
+                    {resumeText ? 
+                    <Button
+                        size="lg"
+                        onClick={() => {
+                            setResumeText("");
+                            setFileName("");
+                        }}
+                        className="bg-red-500 hover:bg-red-600 px-8 py-3 text-lg cursor-pointer"
+                    >
+                        <Trash/>
+                        Limpiar
+                    </Button>
+                    : null
+                    }
                     <Button
                         onClick={handleSubmitResumeText}
                         disabled={!resumeText.trim() || isProcessing}

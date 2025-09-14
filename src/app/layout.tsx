@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ResumeBoost AI - Optimiza tu CV con IA",
+  title: "PerfectCV AI - Optimiza tu CV con IA",
   description: "Mejora y personaliza tu currículum vitae al instante con inteligencia artificial avanzada.",
 };
 

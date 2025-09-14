@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import Footer from '@/components/footer';
+import Header from '@/components/header';
 
 export default function LandingPage() {
   const features = [
@@ -34,26 +35,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="bg-white/95 backdrop-blur-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-gray-900">ResumeBoost AI</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/optimize-cv">
-                <Button className='cursor-pointer'>
-                  Probar Gratis
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+      <Header/>
       <section className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-20 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -198,7 +180,7 @@ export default function LandingPage() {
             ¿Listo para conseguir más entrevistas?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Únete a miles de profesionales que ya han transformado sus carreras con ResumeBoost AI
+            Únete a miles de profesionales que ya han transformado sus carreras con PerfectCV AI
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/optimize-cv">
