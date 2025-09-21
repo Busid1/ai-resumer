@@ -3,27 +3,38 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { pdfjs } from 'react-pdf';
+import PDFPreview from "./pdf-preview";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 interface UploadCVProps {
     fileName: string;
     resumeText: string;
+    pdfUrl: string | null;
     isProcessing: boolean;
     error: string | null;
     handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleSubmitResumeText: (event: React.FormEvent) => void;
     setResumeText: React.Dispatch<React.SetStateAction<string>>;
     setFileName: React.Dispatch<React.SetStateAction<string>>;
+    setPdfUrl: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export default function UploadCV({
     fileName,
     resumeText,
+    pdfUrl,
     isProcessing,
     error,
     handleFileUpload,
     handleSubmitResumeText,
     setResumeText,
-    setFileName
+    setFileName,
+    setPdfUrl,
 }: UploadCVProps) {
     return (
         <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -36,7 +47,7 @@ export default function UploadCV({
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="flex max-md:flex-col gap-6">
                     <div className="space-y-4">
                         <h3 className="font-semibold text-gray-900 flex items-center">
                             <Upload className="w-5 h-5 mr-2 text-blue-600" />
@@ -61,6 +72,7 @@ export default function UploadCV({
                                 <p className="text-sm text-gray-400">Solo archivos .pdf</p>
                             </label>
                         </div>
+                        {pdfUrl && <PDFPreview pdfUrl={pdfUrl} />}
                     </div>
 
                     <div className="space-y-4">
@@ -78,19 +90,20 @@ export default function UploadCV({
                 </div>
 
                 <div className="flex justify-center pt-6 gap-10">
-                    {resumeText ? 
-                    <Button
-                        size="lg"
-                        onClick={() => {
-                            setResumeText("");
-                            setFileName("");
-                        }}
-                        className="bg-red-500 hover:bg-red-600 px-8 py-3 text-lg cursor-pointer"
-                    >
-                        <Trash/>
-                        Limpiar
-                    </Button>
-                    : null
+                    {resumeText ?
+                        <Button
+                            size="lg"
+                            onClick={() => {
+                                setResumeText("");
+                                setFileName("");
+                                setPdfUrl("");
+                            }}
+                            className="bg-red-500 hover:bg-red-600 px-8 py-3 text-lg cursor-pointer"
+                        >
+                            <Trash />
+                            Limpiar
+                        </Button>
+                        : null
                     }
                     <Button
                         onClick={handleSubmitResumeText}

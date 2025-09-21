@@ -33,6 +33,7 @@ export default function AIResume() {
   const [improvement, setImprovement] = useState<ResumeImprovement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -48,8 +49,9 @@ export default function AIResume() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    console.log(file.name);
 
+    const url = URL.createObjectURL(file);
+    setPdfUrl(url);
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument(new Uint8Array(arrayBuffer)).promise;
@@ -194,8 +196,10 @@ export default function AIResume() {
             handleSubmitResumeText={handleSubmitResumeText}
             setResumeText={setResumeText}
             setFileName={setFileName}
-          />
-        )}
+            setPdfUrl={setPdfUrl}
+            pdfUrl={pdfUrl}
+            />
+          )}
 
         {currentStep === 2 && (
           <UploadJob jobOffer={jobOffer} isProcessing={isProcessing} error={error} handleProcessCV={handleProcessCV} setJobOffer={setJobOffer} setCurrentStep={setCurrentStep} />
@@ -227,7 +231,7 @@ export default function AIResume() {
           <ResultCV improvement={improvement} resetForm={resetForm} setIsOpen={setIsOpen} />
         )}
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <DialogContent aria-describedby='cv-zoom' className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
             <div className="bg-white rounded-xl w-full max-w-[1200px] md:max-w-[1400px] lg:max-w-[1600px] max-h-[90vh] overflow-auto p-6 relative">
               <DialogHeader className="flex justify-between items-center">
                 <DialogTitle className="text-2xl font-bold">Comparación de CVs</DialogTitle>
