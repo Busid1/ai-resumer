@@ -112,17 +112,16 @@ export default function ResultCV({
                 </Card>
             </div>
 
-            <div className="flex justify-center space-x-4 pt-6">
-                <Button onClick={resetForm} variant="outline" size="lg" className='px-8 cursor-pointer'>
+            <div className="flex justify-center max-sm:flex-col max-sm:gap-3 gap-6 pt-6">
+                <Button onClick={resetForm} variant="outline" className='px-8 py-5 cursor-pointer'>
                     Optimizar Otro CV
                 </Button>
-                <Button onClick={() => setIsOpen(true)} size="lg" className="px-8 bg-blue-700 hover:bg-blue-600 cursor-pointer">
+                <Button onClick={() => setIsOpen(true)} className="px-8 py-5 bg-blue-700 hover:bg-blue-600 cursor-pointer">
                     <Eye />
                     Ver Comparación
                 </Button>
                 <Button
-                    size="lg"
-                    className="px-8 cursor-pointer"
+                    className="px-8 cursor-pointer py-5"
                     onClick={async () => {
                         try {
                             const response = await fetch('/api/generate-pdf', {

@@ -1,3 +1,5 @@
+"use client";
+
 import { Briefcase, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -44,20 +46,19 @@ export default function UploadJob({
                     />
                 </div>
 
-                <div className="flex justify-between pt-6">
+                <div className="flex justify-between max-sm:flex-col gap-4 pt-6">
                     <Button
                         onClick={() => setCurrentStep(1)}
                         variant="outline"
-                        size="lg"
-                        className='cursor-pointer'
+                        disabled={isProcessing}
+                        className='cursor-pointer px-8 py-5 md:text-lg'
                     >
                         Volver
                     </Button>
                     <Button
                         onClick={handleProcessCV}
                         disabled={!jobOffer.trim() || isProcessing}
-                        size="lg"
-                        className="px-8 py-3 text-lg cursor-pointer"
+                        className="px-8 py-5 md:text-lg cursor-pointer"
                     >
                         {isProcessing ? (
                             <>
@@ -72,7 +73,7 @@ export default function UploadJob({
                         )}
                     </Button>
                 </div>
-                {error && <p className="text-red-600 text-center">{error}</p>}
+                {error && <p className="text-red-600 font-medium">{error}</p>}
             </CardContent>
         </Card>
     )

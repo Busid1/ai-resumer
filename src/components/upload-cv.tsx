@@ -1,15 +1,13 @@
+"use client";
+
 import { ArrowRight, FileText, Sparkles, Trash, Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { pdfjs } from 'react-pdf';
-import PDFPreview from "./pdf-preview";
+import dynamic from "next/dynamic";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+const PDFPreview = dynamic(() => import("./pdf-preview"), { ssr: false });
 
 interface UploadCVProps {
     fileName: string;
@@ -48,7 +46,7 @@ export default function UploadCV({
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="flex max-md:flex-col gap-6">
-                    <div className="space-y-4">
+                    <div className="space-y-4 flex-1">
                         <h3 className="font-semibold text-gray-900 flex items-center">
                             <Upload className="w-5 h-5 mr-2 text-blue-600" />
                             Subir Archivo
@@ -75,7 +73,7 @@ export default function UploadCV({
                         {pdfUrl && <PDFPreview pdfUrl={pdfUrl} />}
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 flex-1">
                         <h3 className="font-semibold text-gray-900 flex items-center">
                             <FileText className="w-5 h-5 mr-2 text-blue-600" />
                             Pegar Texto
@@ -89,16 +87,16 @@ export default function UploadCV({
                     </div>
                 </div>
 
-                <div className="flex justify-center pt-6 gap-10">
+                <div className="flex justify-between max-sm:flex-col pt-6 gap-4">
                     {resumeText ?
                         <Button
-                            size="lg"
                             onClick={() => {
                                 setResumeText("");
                                 setFileName("");
                                 setPdfUrl("");
                             }}
-                            className="bg-red-500 hover:bg-red-600 px-8 py-3 text-lg cursor-pointer"
+                            disabled={isProcessing}
+                            className="bg-red-500 hover:bg-red-600 px-8 py-5 md:text-lg cursor-pointer disabled:cursor-not-allowed"
                         >
                             <Trash />
                             Limpiar
@@ -108,8 +106,7 @@ export default function UploadCV({
                     <Button
                         onClick={handleSubmitResumeText}
                         disabled={!resumeText.trim() || isProcessing}
-                        size="lg"
-                        className="px-8 py-3 text-lg cursor-pointer"
+                        className="px-8 py-5 flex ml-auto cursor-pointer md:text-lg"
                     >
                         {isProcessing ? (
                             <>
@@ -124,7 +121,7 @@ export default function UploadCV({
                         )}
                     </Button>
                 </div>
-                {error && <p className="text-red-600 text-center">{error}</p>}
+                {error && <p className="text-red-600 font-medium">{error}</p>}
             </CardContent>
         </Card>
     );

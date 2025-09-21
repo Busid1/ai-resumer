@@ -155,9 +155,9 @@ export default function AIResume() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl max-md:max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <div className="flex items-center justify-center space-x-8">
+          <div className="flex items-center justify-center space-x-8 max-md:space-x-4">
             {[
               { step: 1, title: "Cargar CV", icon: FileText },
               { step: 2, title: "Oferta Laboral", icon: Briefcase },
@@ -174,12 +174,12 @@ export default function AIResume() {
                     <Icon className="w-6 h-6" />
                   )}
                 </div>
-                <span className={`ml-3 font-medium ${currentStep >= step ? 'text-blue-600' : 'text-gray-500'
+                <span className={`ml-3 font-medium max-md:hidden ${currentStep >= step ? 'text-blue-600' : 'text-gray-500'
                   }`}>
                   {title}
                 </span>
                 {step < 3 && (
-                  <ArrowRight className="w-5 h-5 text-gray-400 ml-8" />
+                  <ArrowRight className="w-5 h-5 text-gray-400 ml-4" />
                 )}
               </div>
             ))}
@@ -233,8 +233,8 @@ export default function AIResume() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogContent aria-describedby='cv-zoom' className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
             <div className="bg-white rounded-xl w-full max-w-[1200px] md:max-w-[1400px] lg:max-w-[1600px] max-h-[90vh] overflow-auto p-6 relative">
-              <DialogHeader className="flex justify-between items-center">
-                <DialogTitle className="text-2xl font-bold">Comparación de CVs</DialogTitle>
+              <DialogHeader className="flex justify-between items-start">
+                <DialogTitle className="text-2xl font-bold max-sm:text-lg">Comparación de CVs</DialogTitle>
                 <DialogClose asChild>
                   <Button variant="ghost" className="p-2 absolute top-4 right-4 cursor-pointer hover:bg-red-500 hover:text-white">
                     <X className="w-5 h-5" />
