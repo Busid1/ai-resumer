@@ -106,7 +106,7 @@ export default function UploadCV({
                     <Button
                         onClick={handleSubmitResumeText}
                         disabled={!resumeText.trim() || isProcessing}
-                        className="px-8 py-5 flex ml-auto cursor-pointer md:text-lg"
+                        className="px-8 py-5 flex sm:ml-auto cursor-pointer md:text-lg"
                     >
                         {isProcessing ? (
                             <>
