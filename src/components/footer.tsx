@@ -5,7 +5,7 @@ import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 export default function Footer() {
     return (
         <footer className="bg-gray-900 text-white py-6">
-            <div className="flex justify-between gap-8 px-10">
+            <div className="flex flex-col justify-between max-sm:gap-4 gap-8 px-10">
                 <p className='text-gray-300'>&copy; 2025 PerfectCV AI. Creado por Busid.</p>
                 <ul className="flex gap-4 items-center text-sm text-gray-300 sm:mt-0">
                     <li>
